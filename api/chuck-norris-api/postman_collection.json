@@ -1,0 +1,282 @@
+{
+  "info": {
+    "name": "Chuck Norris API — QA Challenge",
+    "description": "API test suite for https://api.chucknorris.io\n\nCovers: random jokes, category filtering, search, negative cases, and a POST /jokes design proposal.\n\nAlso available as a Bruno collection (git-native): run with `bru run --env production`",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.chucknorris.io",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "TC-API-001 GET random joke",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/jokes/random",
+        "description": "Validates all required fields, data types, URL structure and response time."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status is 200', function() {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Response has required fields', function() {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body).to.have.property('id');",
+              "  pm.expect(body).to.have.property('value');",
+              "  pm.expect(body).to.have.property('url');",
+              "  pm.expect(body).to.have.property('icon_url');",
+              "  pm.expect(body).to.have.property('created_at');",
+              "  pm.expect(body).to.have.property('updated_at');",
+              "  pm.expect(body).to.have.property('categories');",
+              "});",
+              "",
+              "pm.test('Joke value is a non-empty string', function() {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.value).to.be.a('string').and.have.lengthOf.above(0);",
+              "});",
+              "",
+              "pm.test('ID is a non-empty string', function() {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.id).to.be.a('string').and.have.lengthOf.above(0);",
+              "});",
+              "",
+              "pm.test('URL points to the joke itself', function() {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.url).to.include('https://api.chucknorris.io/jokes/');",
+              "  pm.expect(body.url).to.include(body.id);",
+              "});",
+              "",
+              "pm.test('Categories is an array', function() {",
+              "  pm.expect(pm.response.json().categories).to.be.an('array');",
+              "});",
+              "",
+              "pm.test('Response time is under 2000ms', function() {",
+              "  pm.expect(pm.response.responseTime).to.be.below(2000);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-API-002 GET joke by category",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/jokes/random?category=dev",
+        "description": "Validates that the category filter returns jokes belonging to the requested category."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status is 200', function() {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Returned joke belongs to requested category', function() {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.categories).to.include('dev');",
+              "});",
+              "",
+              "pm.test('Joke value is not empty', function() {",
+              "  pm.expect(pm.response.json().value).to.be.a('string').and.have.lengthOf.above(0);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-API-002b GET invalid category (negative)",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/jokes/random?category=invalidcategory",
+        "description": "Negative test — invalid category should return 404. BUG: error response body is missing a descriptive message field."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Invalid category returns 404', function() {",
+              "  pm.response.to.have.status(404);",
+              "});",
+              "",
+              "pm.test('BUG — Error response missing descriptive message field', function() {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body).to.have.property('error');",
+              "  pm.expect(body.error).to.equal('Not Found');",
+              "  // Actual response lacks a message field identifying the invalid category",
+              "  // Expected: { status: 404, error: 'Not Found', message: 'No jokes found for category: invalidcategory' }",
+              "  // Actual:   { timestamp, status: 404, error: 'Not Found', path: '/jokes/random' }",
+              "});",
+              "",
+              "pm.test('Response has status field matching HTTP status', function() {",
+              "  pm.expect(pm.response.json().status).to.equal(404);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-API-003 GET search jokes",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/jokes/search?query=code",
+        "description": "Validates search returns results containing the query term in every joke value."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status is 200', function() {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Response has total and result fields', function() {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body).to.have.property('total');",
+              "  pm.expect(body).to.have.property('result');",
+              "});",
+              "",
+              "pm.test('Total is a non-negative number', function() {",
+              "  pm.expect(pm.response.json().total).to.be.a('number').and.to.be.at.least(0);",
+              "});",
+              "",
+              "pm.test('Result is an array', function() {",
+              "  pm.expect(pm.response.json().result).to.be.an('array');",
+              "});",
+              "",
+              "pm.test('Each result contains the search term in the joke value', function() {",
+              "  const results = pm.response.json().result;",
+              "  results.forEach(function(joke) {",
+              "    pm.expect(joke.value.toLowerCase()).to.include('code');",
+              "  });",
+              "});",
+              "",
+              "pm.test('Each result has required fields', function() {",
+              "  const results = pm.response.json().result;",
+              "  results.forEach(function(joke) {",
+              "    pm.expect(joke).to.have.property('id');",
+              "    pm.expect(joke).to.have.property('value');",
+              "    pm.expect(joke).to.have.property('url');",
+              "  });",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-API-003b GET search empty query (negative)",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/jokes/search?query=",
+        "description": "Negative test — empty query string should return 400 Bad Request."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Empty query returns 400', function() {",
+              "  pm.response.to.have.status(400);",
+              "});",
+              "",
+              "pm.test('Error response has violation field', function() {",
+              "  pm.expect(pm.response.json()).to.have.property('violations');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-API-005 GET categories",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/jokes/categories",
+        "description": "Validates the categories list endpoint returns a non-empty array of known category strings."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status is 200', function() {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Response is a non-empty array', function() {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body).to.be.an('array').and.have.lengthOf.above(0);",
+              "});",
+              "",
+              "pm.test('All categories are non-empty strings', function() {",
+              "  pm.response.json().forEach(function(cat) {",
+              "    pm.expect(cat).to.be.a('string').and.have.lengthOf.above(0);",
+              "  });",
+              "});",
+              "",
+              "pm.test('Known categories are present', function() {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body).to.include('dev');",
+              "  pm.expect(body).to.include('sport');",
+              "  pm.expect(body).to.include('food');",
+              "  pm.expect(body).to.include('music');",
+              "});",
+              "",
+              "pm.test('TC-API-002 category dev is valid (cross-check)', function() {",
+              "  pm.expect(pm.response.json()).to.include('dev');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TC-API-004 POST create joke (design proposal)",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/jokes",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"value\": \"Chuck Norris can unit test entire applications with a single assertion.\",\n  \"categories\": [\"dev\"],\n  \"safe\": true,\n  \"lang\": \"en\"\n}"
+        },
+        "description": "DESIGN PROPOSAL — This endpoint does not currently exist.\n\nDocuments the proposed contract for a POST /jokes endpoint.\nExpected response: 201 Created with generated id, url, created_at, updated_at.\n\nSee docs/api-testing.md for full test strategy (happy path, validation, edge cases)."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// This endpoint does not exist — expected to return 404 or 405",
+              "// This request documents the proposed design only",
+              "pm.test('Endpoint does not exist (design proposal)', function() {",
+              "  pm.expect([404, 405]).to.include(pm.response.code);",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "name": "qa-challenge",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "test": "NODE_OPTIONS=--experimental-vm-modules npx playwright test",
+    "test:auth": "NODE_OPTIONS=--experimental-vm-modules npx playwright test tests/auth.spec.ts",
+    "test:cart": "NODE_OPTIONS=--experimental-vm-modules npx playwright test tests/cart.spec.ts",
+    "test:checkout": "NODE_OPTIONS=--experimental-vm-modules npx playwright test tests/checkout.spec.ts",
+    "test:catalog": "NODE_OPTIONS=--experimental-vm-modules npx playwright test tests/catalog.spec.ts",
+    "test:e2e": "NODE_OPTIONS=--experimental-vm-modules npx playwright test tests/e2e.spec.ts",
+    "test:headed": "NODE_OPTIONS=--experimental-vm-modules npx playwright test --headed",
+    "report": "npx playwright show-report"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@ai-sdk/amazon-bedrock": "^4.0.117",
+    "@browserbasehq/stagehand": "^3.5.0",
+    "gh": "^2.8.9",
+    "playwright": "^1.60.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "dotenv": "^17.4.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3",
+    "zod": "^4.4.3"
+  }
+}

@@ -1,0 +1,15 @@
+export const NavigationLocators = {
+  menuButton: '#react-burger-menu-btn',
+  menuCloseButton: '#react-burger-close-btn',
+  menuContainer: '.bm-menu-wrap',
+  allItemsLink: '#inventory_sidebar_link',
+  aboutLink: '#about_sidebar_link',
+  logoutLink: '#logout_sidebar_link',
+  resetAppStateLink: '#reset_sidebar_link',
+  pageTitle: '.title',
+  header: '.primary_header',
+  footer: '.footer',
+  twitterLink: 'a[href*="twitter"], a[href*="x.com"]',
+  facebookLink: 'a[href*="facebook"]',
+  linkedinLink: 'a[href*="linkedin"]',
+} as const;

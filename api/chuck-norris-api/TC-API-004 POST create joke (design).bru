@@ -1,0 +1,43 @@
+meta {
+  name: TC-API-004 POST create joke (design proposal)
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/jokes
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "value": "Chuck Norris can unit test entire applications with a single assertion.",
+    "categories": ["dev"],
+    "safe": true,
+    "lang": "en"
+  }
+}
+
+docs {
+  This endpoint does not currently exist in the Chuck Norris API.
+  This request documents the proposed design for a POST /jokes endpoint.
+  See docs/api-testing.md for the full design analysis and test strategy.
+
+  Expected response (201 Created):
+  {
+    "id": "newly_generated_id",
+    "value": "Chuck Norris can unit test entire applications...",
+    "categories": ["dev"],
+    "safe": true,
+    "lang": "en",
+    "icon_url": "https://api.chucknorris.io/img/avatar/chuck-norris.png",
+    "url": "https://api.chucknorris.io/jokes/newly_generated_id",
+    "created_at": "2026-06-15T00:00:00.000Z",
+    "updated_at": "2026-06-15T00:00:00.000Z"
+  }
+}

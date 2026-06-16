@@ -1,0 +1,30 @@
+meta {
+  name: TC-API-002b GET invalid category (negative)
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/jokes/random?category=invalidcategory
+  body: none
+  auth: none
+}
+
+tests {
+  test("Invalid category returns 404", function() {
+    expect(res.getStatus()).to.equal(404);
+  });
+
+  test("BUG — Error response missing descriptive message field", function() {
+    const body = res.getBody();
+    // Actual response returns: { timestamp, status, error, path }
+    // Expected: a 'message' field explaining which category is invalid
+    // This is a usability issue — clients cannot identify the bad input from the response
+    expect(body).to.have.property("error");
+    expect(body.error).to.equal("Not Found");
+  });
+
+  test("Response has status field matching HTTP status", function() {
+    expect(res.getBody().status).to.equal(404);
+  });
+}

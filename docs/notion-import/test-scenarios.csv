@@ -1,0 +1,38 @@
+ID;Module;Title;Type;Severity;Priority;Preconditions;Steps;Expected Result;Status
+TC-AUTH-001;AUTH;Successful login with standard_user;Functional;Critical;P1;User on login page not logged in;1. Enter username: standard_user / 2. Enter password: secret_sauce / 3. Click Login;Redirected to /inventory.html - 6 products visible;Not Run
+TC-AUTH-002;AUTH;Locked out user sees correct error;Negative;High;P2;User on login page;1. Enter username: locked_out_user / 2. Enter password: secret_sauce / 3. Click Login;Error: Sorry this user has been locked out. User stays on login page;Not Run
+TC-AUTH-003;AUTH;Invalid credentials show error;Negative;High;P1;User on login page;1. Enter username: invalid_user / 2. Enter password: wrongpass / 3. Click Login;Error: Username and password do not match. No redirect;Not Run
+TC-AUTH-004;AUTH;Empty username shows validation error;Negative;High;P1;User on login page;1. Leave username empty / 2. Enter any password / 3. Click Login;Error: Username is required;Not Run
+TC-AUTH-005;AUTH;Empty password shows validation error;Negative;High;P1;User on login page;1. Enter username: standard_user / 2. Leave password empty / 3. Click Login;Error: Password is required;Not Run
+TC-AUTH-006;AUTH;Logout ends session and redirects to login;Functional;High;P1;Logged in as standard_user;1. Click hamburger menu / 2. Click Logout;Session ends - redirected to login page;Not Run
+TC-AUTH-007;AUTH;Direct URL access without session is blocked;Security;Critical;P1;User NOT logged in;1. Navigate directly to /inventory.html;Redirected to login page - inventory not accessible;Not Run
+TC-CAT-001;CATALOG;Inventory displays exactly 6 products;Functional;Critical;P1;Logged in as standard_user;1. Observe inventory page;6 products shown each with image and name and description and price and Add to cart button;Not Run
+TC-CAT-002;CATALOG;Sort by Price low to high;Functional;Medium;P2;On inventory page;1. Click sort dropdown / 2. Select Price low to high;Products reordered: 7.99 - 9.99 - 15.99 - 15.99 - 29.99 - 49.99;Not Run
+TC-CAT-003;CATALOG;Sort by Price high to low;Functional;Medium;P2;On inventory page;1. Click sort dropdown / 2. Select Price high to low;Products reordered: 49.99 - 29.99 - 15.99 - 15.99 - 9.99 - 7.99;Not Run
+TC-CAT-004;CATALOG;Sort by Name Z to A;Functional;Medium;P2;On inventory page;1. Click sort dropdown / 2. Select Name Z to A;Products in reverse alphabetical order;Not Run
+TC-CAT-005;CATALOG;Product detail page has all required elements;Functional;Medium;P2;On inventory page;1. Click any product name or image;Detail page shows large image and full name and description and price and Add to cart and Back to products;Not Run
+TC-CAT-006;CATALOG;BUG - problem_user all product images broken;Bug Verification;High;P2;Logged in as problem_user;1. Observe inventory page;All 6 products show unique correct images - no 404 placeholders;FAIL
+TC-CAT-007;CATALOG;BUG - performance_glitch_user login too slow;Performance;Medium;P3;On login page;1. Login as performance_glitch_user / 2. Measure load time;Inventory loads in under 2 seconds;FAIL
+TC-CART-001;CART;Adding a product updates the cart badge;Functional;Critical;P1;Logged in on inventory page;1. Click Add to cart on Sauce Labs Backpack;Button changes to Remove - cart badge shows 1;Not Run
+TC-CART-002;CART;Adding multiple products reflects correct badge count;Functional;High;P1;Logged in on inventory page;1. Add Backpack / 2. Add Bike Light / 3. Add Bolt T-Shirt;Cart badge shows 3 - all 3 buttons show Remove;Not Run
+TC-CART-003;CART;Add product from product detail page;Functional;High;P2;On inventory page;1. Click any product to open detail / 2. Click Add to cart;Badge increments by 1 - still on detail page;Not Run
+TC-CART-004;CART;Removing a product decrements the badge;Functional;High;P1;Added 2 products on inventory;1. Add Backpack and Bike Light / 2. Click Remove on Backpack;Badge shows 1 - Backpack button resets to Add to cart;Not Run
+TC-CART-005;CART;Cart persists when navigating between pages;Functional;High;P2;Added 2 products;1. Open product detail / 2. Go back to inventory;Cart badge still shows 2;Not Run
+TC-CART-006;CART;Cart QTY field is display-only;Edge Case;Medium;P3;1 item in cart;1. Go to cart / 2. Try to edit QTY value;QTY shows 1 and is not an editable input;Not Run
+TC-CART-007;CART;Continue Shopping returns to inventory with cart intact;Functional;Medium;P2;1 item in cart;1. Go to cart / 2. Click Continue Shopping;Redirected to inventory - cart badge preserved;Not Run
+TC-CHK-001;CHECKOUT;Complete full checkout happy path;Functional;Critical;P1;1 or more items in cart;1. Checkout / 2. Fill John and Doe and 12345 / 3. Continue / 4. Finish;Confirmation page: Thank you for your order;Not Run
+TC-CHK-002;CHECKOUT;Overview shows correct payment and shipping info;Functional;High;P2;On checkout overview step;1. Proceed to overview step;Payment: SauceCard 31337 - Shipping: Free Pony Express Delivery;Not Run
+TC-CHK-003;CHECKOUT;Order total calculation is correct;Functional;High;P1;Backpack and Bike Light in cart;1. Proceed to overview step;Item total: 39.98 - Tax: 3.20 - Total: 43.18;Not Run
+TC-CHK-004;CHECKOUT;Empty First Name blocks proceeding;Negative;High;P1;On checkout step 1;1. Fill Last Name and Zip only / 2. Click Continue;Error: First Name is required - stays on step 1;Not Run
+TC-CHK-005;CHECKOUT;Empty Last Name blocks proceeding;Negative;High;P1;On checkout step 1;1. Fill First Name and Zip only / 2. Click Continue;Error: Last Name is required - stays on step 1;Not Run
+TC-CHK-006;CHECKOUT;Empty Postal Code blocks proceeding;Negative;High;P1;On checkout step 1;1. Fill First Name and Last Name only / 2. Click Continue;Error: Postal Code is required;Not Run
+TC-CHK-007;CHECKOUT;Cancel at Step 1 returns to cart with items intact;Functional;Medium;P2;On checkout step 1;1. Click Cancel;Returns to cart - items still present;Not Run
+TC-CHK-008;CHECKOUT;Cancel at Step 2 returns to inventory;Functional;Medium;P2;On checkout overview step;1. Fill info and continue to Step 2 / 2. Click Cancel;Returns to inventory - cart items preserved;Not Run
+TC-CHK-009;CHECKOUT;Cart is empty after completing an order;Functional;High;P1;Completed a full checkout;1. Click Back Home after order confirmation;Cart badge gone - cart page empty;Not Run
+TC-CHK-010;CHECKOUT;BUG - Checkout allowed with empty cart;Bug Verification;Medium;P2;Empty cart;1. Go to cart with 0 items / 2. Click Checkout;Should show warning or block checkout - not proceed to step 1;FAIL
+TC-NAV-001;NAVIGATION;Hamburger menu displays all options;Functional;Medium;P2;Logged in;1. Click hamburger menu icon;Menu shows: All Items and About and Logout and Reset App State;Not Run
+TC-NAV-002;NAVIGATION;Reset App State clears the cart;Functional;Medium;P2;3 items in cart logged in;1. Open menu / 2. Click Reset App State;Cart badge gone - all buttons reset to Add to cart;Not Run
+TC-NAV-003;NAVIGATION;Back to products from product detail;Functional;Low;P3;On product detail page;1. Click Back to products;Returns to inventory - cart and sort preserved;Not Run
+TC-NAV-004;NAVIGATION;Footer links present on all pages;UI;Low;P4;Logged in;1. Check footer on all pages;Twitter and Facebook and LinkedIn and Terms of Service and Privacy Policy visible;Not Run
+TC-USR-001;SPECIAL USERS;problem_user - sort is broken;Bug Verification;High;P2;Logged in as problem_user;1. Click sort dropdown / 2. Select Price low to high;Products reorder correctly by price ascending;FAIL
+TC-USR-002;SPECIAL USERS;performance_glitch_user - slow page loads;Performance;Medium;P3;Logged in as performance_glitch_user;1. Navigate between pages;Pages load within acceptable threshold under 2s;FAIL

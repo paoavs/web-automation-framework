@@ -1,0 +1,48 @@
+meta {
+  name: TC-API-003 GET search jokes
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/jokes/search?query=code
+  body: none
+  auth: none
+}
+
+tests {
+  test("Status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("Response has total and result fields", function() {
+    const body = res.getBody();
+    expect(body).to.have.property("total");
+    expect(body).to.have.property("result");
+  });
+
+  test("Total is a non-negative number", function() {
+    expect(res.getBody().total).to.be.a("number").and.to.be.at.least(0);
+  });
+
+  test("Result is an array", function() {
+    expect(res.getBody().result).to.be.an("array");
+  });
+
+  test("Each result contains the search term in the joke value", function() {
+    const results = res.getBody().result;
+    results.forEach(function(joke) {
+      expect(joke.value.toLowerCase()).to.include("code");
+    });
+  });
+
+  test("Each result has required fields", function() {
+    const results = res.getBody().result;
+    results.forEach(function(joke) {
+      expect(joke).to.have.property("id");
+      expect(joke).to.have.property("value");
+      expect(joke).to.have.property("url");
+    });
+  });
+
+}

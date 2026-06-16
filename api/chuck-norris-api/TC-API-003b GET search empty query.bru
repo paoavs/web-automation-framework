@@ -1,0 +1,22 @@
+meta {
+  name: TC-API-003b GET search empty query (negative)
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/jokes/search?query=
+  body: none
+  auth: none
+}
+
+tests {
+  test("Empty query returns 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+
+  test("Error response has violation field", function() {
+    const body = res.getBody();
+    expect(body).to.have.property("violations");
+  });
+}

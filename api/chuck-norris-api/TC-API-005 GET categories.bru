@@ -1,0 +1,44 @@
+meta {
+  name: TC-API-005 GET categories
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{baseUrl}}/jokes/categories
+  body: none
+  auth: none
+}
+
+tests {
+  test("Status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("Response is a non-empty array", function() {
+    const body = res.getBody();
+    expect(body).to.be.an("array");
+    expect(body.length).to.be.greaterThan(0);
+  });
+
+  test("All categories are non-empty strings", function() {
+    const body = res.getBody();
+    body.forEach(function(category) {
+      expect(category).to.be.a("string").and.have.lengthOf.above(0);
+    });
+  });
+
+  test("Known categories are present", function() {
+    const body = res.getBody();
+    expect(body).to.include("dev");
+    expect(body).to.include("sport");
+    expect(body).to.include("food");
+    expect(body).to.include("music");
+  });
+
+  test("TC-API-002 category 'dev' is valid (cross-check)", function() {
+    // Confirms that the 'dev' category used in TC-API-002 is a real category
+    const body = res.getBody();
+    expect(body).to.include("dev");
+  });
+}
